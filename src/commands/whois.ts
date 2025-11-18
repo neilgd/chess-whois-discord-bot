@@ -1,5 +1,5 @@
 import { InteractionResponseType } from "discord-interactions";
-import { APIApplicationCommandInteraction, APIApplicationCommandInteractionDataBasicOption, ApplicationCommandOptionType, ApplicationCommandType, AttachmentBuilder, CommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
+import { APIApplicationCommandInteraction, APIApplicationCommandInteractionDataBasicOption, APIApplicationCommandInteractionDataUserOption, ApplicationCommandOptionType, ApplicationCommandType, AttachmentBuilder, CommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 
 
@@ -36,9 +36,20 @@ function getUserId(interaction: APIApplicationCommandInteraction)
 
 
 export async function execute(interaction: APIApplicationCommandInteraction) {
-const userId = getUserId(interaction);
 
-  if (!userId) {  
+  if (interaction.data.type !== ApplicationCommandType.ChatInput) {
+    //this shouldn't happen
+    return;
+  }
+
+const options  = interaction.data.options??[];
+const option: APIApplicationCommandInteractionDataUserOption = options.find(opt => opt.name === 'user-name') as APIApplicationCommandInteractionDataUserOption;
+
+  if (!option){
+    return;
+  }
+
+  if (!option.value) {  
      return {
       type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
       data:  {
@@ -48,7 +59,7 @@ const userId = getUserId(interaction);
     };
   }   
 
-  const res = await fetch(`https://api.lichessladders.com/users/search?discordId=${userId}`, {
+  const res = await fetch(`https://api.lichessladders.com/users/search?discordId=${option.value}`, {
   method: "GET",
   headers: {
     "Accept": "application/json"
@@ -81,10 +92,35 @@ if (data.length==0)
 
   const id = data[0].lichessId;
 
+  const resolvedUser = interaction.data.resolved!.users![option.value]!;
+  const resolvedMember = interaction.data.resolved!.members![option.value]!;
+
+  const mainName = resolvedUser.global_name;
+  const nick = resolvedMember.nick;
+  const secondName = resolvedUser.username;
+
+  const mainLower = mainName?.toLowerCase();
+  const secondLower = secondName?.toLowerCase();
+
+  let extraNames = (mainLower!=secondLower && !!secondName)?secondName:"";
+  if (nick)
+  {
+    const nickLower = nick?.toLowerCase();
+
+    if (nickLower!=mainLower && nickLower!=secondLower)
+    {
+        extraNames = extraNames + ((extraNames.length!=0)?"/":"") + nick;
+    }
+  }
+
+  const discordName = `*${mainName}*${((extraNames.length==0)?"":` (aka ${extraNames})`)}`;
+
+
+
       return {
       type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
       data:  {
-        content:`You can view the user at <https://lichessladders.com/@/${id}>. Their Lichess page is <https://lichess.org/@/${id}>`,
+        content:`${discordName}'s Lichess username is ${id}. You can view their ladder profile at <https://lichessladders.com/@/${id}>. Their Lichess page is <https://lichess.org/@/${id}>`,
         flags: MessageFlags.Ephemeral
       } 
   
