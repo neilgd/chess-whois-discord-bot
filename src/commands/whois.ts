@@ -1,19 +1,19 @@
 import { InteractionResponseType } from "discord-interactions";
-import { APIApplicationCommandInteraction, APIApplicationCommandInteractionDataBasicOption, APIApplicationCommandInteractionDataUserOption, ApplicationCommandOptionType, ApplicationCommandType, AttachmentBuilder, CommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
-import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
+import { APIApplicationCommandInteraction, APIApplicationCommandInteractionDataBasicOption, APIApplicationCommandInteractionDataUserOption, ApplicationCommandOptionType, ApplicationCommandType, ApplicationIntegrationType, AttachmentBuilder, CommandInteraction, InteractionContextType, MessageFlags, SlashCommandBuilder } from "discord.js";
 
-
-const fenRegex = /^(?:[prnbqkPRNBQK1-8]+\/){7}[prnbqkPRNBQK1-8]+\s[wb]\s(?:[KQkq]{1,4}|-)\s(?:[a-h][36]|-)\s\d+\s\d+$/;
-
+//these interaction types and contexts mean it can be installed in servers
+//but also by users, and appear in their DMs
 export const data = new SlashCommandBuilder()
   .setName("whois")
   .setDescription("Find the lichess username from a Discord user")
+  .setIntegrationTypes([ApplicationIntegrationType.UserInstall, ApplicationIntegrationType.GuildInstall])
+  .setContexts([InteractionContextType.BotDM, InteractionContextType.Guild, InteractionContextType.PrivateChannel])
   .addUserOption(option => 
     option.setName('user-name')
       .setDescription('The Discord user')
       .setRequired(true)
-  );
-  
+	
+  )  
 function getUserId(interaction: APIApplicationCommandInteraction)
 {
     if (interaction.data.type !== ApplicationCommandType.ChatInput) {
@@ -127,12 +127,3 @@ if (data.length==0)
 
 }
 }
-
-  //await replyToDiscord(fen, interaction.token);
-/*
-  return {
-      type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
-    };
-}*/
-
- 

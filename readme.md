@@ -1,0 +1,27 @@
+You'll need to
+
+1) set up an AWS lambda function.  The function entry point is discord-handler.handler
+2) set up a Discord bot
+3) Set up a function URL for the lambda function
+5) Set the following environment variables:
+
+DISCORD_TOKEN
+DISCORD_APP_ID
+DISCORD_PUBLIC_KEY
+DISCORD_SERVER_ID - Server for testing purposes
+
+To deploy the command:
+
+1) Run deploy-commands.ps1 - this will update the commands available to the bot
+2) Edit deploy-discord-handler.ps1 to include the lambda function name
+3) Run deploy-discord-handler.ps1 to deploy the code as an AWS lambda function
+
+
+4) Add the lambda function name as the interactions web hook for the bot.
+And here is the install URL for both user and server installs:
+
+https://discord.com/oauth2/authorize?client_id=DISCORD_APP_ID&scope=bot%20applications.commands&permissions=0&integration_type=0&integration_type=1
+
+
+
+
