@@ -12,7 +12,8 @@ import {
   APIInteraction,
   InteractionType,
   APIApplicationCommandInteraction,
-  APIPingInteraction
+  APIPingInteraction,
+  ApplicationCommandType
 } from 'discord-api-types/v10';
 
 import {commands} from './commands/index';
@@ -84,46 +85,40 @@ export const handler = async (
   // At this point, we trust the request
   const interaction = JSON.parse(rawBody) as APIInteraction;
   
-  //console.log('Interaction', interaction);
+  console.log('Interaction', interaction);
 
-  // 1) Handle PING – required for Discord to accept your endpoint URL
-  if (interaction.type === InteractionType.Ping) {
-    return jsonResponse({
-      type: InteractionResponseType.Pong,
-    });
-  }
 
-  // 2) Handle slash commands (APPLICATION_COMMAND)
-  if (interaction.type === InteractionType.ApplicationCommand) {
-   
-      const cmd = interaction as APIApplicationCommandInteraction;
-      const name = cmd.data.name;         // fully typed
+  switch (interaction.type)
+  {
+		case InteractionType.Ping:
+			return jsonResponse({
+			type: InteractionResponseType.Pong,
+			});
+		case InteractionType.ApplicationCommand:
+			console.log("Command");
+			
+			const cmd = interaction as APIApplicationCommandInteraction;
+			console.log(cmd.data);
+			
+			switch (cmd.data.type)
+				{
+					case ApplicationCommandType.User:
+						const response = await commands.userWhois.execute(cmd);
+						return jsonResponse(response);
+					case ApplicationCommandType.ChatInput:
+						const name = cmd.data.name; 
 
-      //console.log('Command name:', name);
+						switch (name) {
+							case 'whois':
+								const response = await commands.whois.execute(cmd);
+								return jsonResponse(response);
+						}
+					}
+	}
 
-    switch (name) {
-      case 'whois':
-		{
-			const response = await commands.whois.execute(cmd);
-			return jsonResponse(response);
-		}
-      default:
-        return jsonResponse({
-          type: InteractionResponseType.ChannelMessageWithSource,
-          data: {
-            content: `Unknown command: \`${name ?? '???'}\``,
-            flags: 64, // ephemeral
-          },
-        });
-    }
-  }
+	return { statusCode:400,body:"unknown command"};
+}
 
-  // 3) Other interaction types (buttons, modals, etc.) could go here
-  return {
-    statusCode: 400,
-    body: 'Unhandled interaction type',
-  };
-};
 
 function jsonResponse(body: unknown): APIGatewayProxyResultV2 {
   return {

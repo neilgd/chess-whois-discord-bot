@@ -1,5 +1,8 @@
+// /whois slash command
+
 import { InteractionResponseType } from "discord-interactions";
-import { APIApplicationCommandInteraction, APIApplicationCommandInteractionDataBasicOption, APIApplicationCommandInteractionDataUserOption, ApplicationCommandOptionType, ApplicationCommandType, ApplicationIntegrationType, AttachmentBuilder, CommandInteraction, InteractionContextType, MessageFlags, SlashCommandBuilder } from "discord.js";
+import { APIApplicationCommandInteraction, APIApplicationCommandInteractionDataBasicOption, APIApplicationCommandInteractionDataUserOption, APIChatInputApplicationCommandInteraction, ApplicationCommandOptionType, ApplicationCommandType, ApplicationIntegrationType, AttachmentBuilder, CommandInteraction, InteractionContextType, MessageFlags, SlashCommandBuilder } from "discord.js";
+import { userDescription } from "../user-description";
 
 //these interaction types and contexts mean it can be installed in servers
 //but also by users, and appear in their DMs
@@ -37,13 +40,14 @@ function getUserId(interaction: APIApplicationCommandInteraction)
 
 export async function execute(interaction: APIApplicationCommandInteraction) {
 
+	console.log("In execute");
   if (interaction.data.type !== ApplicationCommandType.ChatInput) {
     //this shouldn't happen
     return;
   }
 
-const options  = interaction.data.options??[];
-const option: APIApplicationCommandInteractionDataUserOption = options.find(opt => opt.name === 'user-name') as APIApplicationCommandInteractionDataUserOption;
+	const options  = interaction.data.options??[];
+	const option: APIApplicationCommandInteractionDataUserOption = options.find(opt => opt.name === 'user-name') as APIApplicationCommandInteractionDataUserOption;
 
   if (!option){
     return;
@@ -59,71 +63,11 @@ const option: APIApplicationCommandInteractionDataUserOption = options.find(opt 
     };
   }   
 
-  const res = await fetch(`https://api.lichessladders.com/users/search?discordId=${option.value}`, {
-  method: "GET",
-  headers: {
-    "Accept": "application/json"
-  }
-});
-
-if (!res.ok) {
-  console.error(await res.text());
-      return {
-      type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-      data:  {
-        content:`There was a problem`,
-        flags: MessageFlags.Ephemeral
-      } 
-  }
-}
-
-const data : any [] = await res.json();
-
-if (data.length==0)
-{
-     return {
-      type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-      data:  {
-        content:`That user wasn't found in the ladders.`,
-        flags: MessageFlags.Ephemeral
-      } 
-  }
-}
-
-  const id = data[0].lichessId;
-
-  const resolvedUser = interaction.data.resolved!.users![option.value]!;
-  const resolvedMember = interaction.data.resolved!.members![option.value]!;
-
-  const mainName = resolvedUser.global_name;
-  const nick = resolvedMember.nick;
-  const secondName = resolvedUser.username;
-
-  const mainLower = mainName?.toLowerCase();
-  const secondLower = secondName?.toLowerCase();
-
-  let extraNames = (mainLower!=secondLower && !!secondName)?secondName:"";
-  if (nick)
-  {
-    const nickLower = nick?.toLowerCase();
-
-    if (nickLower!=mainLower && nickLower!=secondLower)
-    {
-        extraNames = extraNames + ((extraNames.length!=0)?"/":"") + nick;
-    }
-  }
-
-  const discordName = `*${mainName}*${((extraNames.length==0)?"":` (aka ${extraNames})`)}`;
-
-
-
-      return {
-      type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-      data:  {
-        content:`${discordName}'s Lichess username is ${id}. You can view their ladder profile at <https://lichessladders.com/@/${id}>. Their Lichess page is <https://lichess.org/@/${id}>`,
-        flags: MessageFlags.Ephemeral
-      } 
-  
-
+	return {
+	type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+	data:  {
+	content:await userDescription(option.value, interaction as APIChatInputApplicationCommandInteraction),
+	flags: MessageFlags.Ephemeral
+	} 
 }
 }
