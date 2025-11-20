@@ -1,6 +1,6 @@
-import { APIApplicationCommandInteraction, APIApplicationCommandInteractionDataBasicOption, APIApplicationCommandInteractionDataUserOption, APIChatInputApplicationCommandInteraction, APIContextMenuInteraction, APIUser, APIUserApplicationCommandInteraction, ApplicationCommandOptionType, ApplicationCommandType, ApplicationIntegrationType, AttachmentBuilder, CommandInteraction, ContextMenuCommandBuilder, InteractionContextType, InteractionType, MessageFlags, SlashCommandBuilder } from "discord.js";
+import { APIApplicationCommandInteraction, APIApplicationCommandInteractionDataBasicOption, APIApplicationCommandInteractionDataUserOption, APIChatInputApplicationCommandInteraction, APIContextMenuInteraction, APIUser, APIUserApplicationCommandInteraction, APIUserApplicationCommandInteractionData, ApplicationCommandOptionType, ApplicationCommandType, ApplicationIntegrationType, AttachmentBuilder, CommandInteraction, ContextMenuCommandBuilder, InteractionContextType, InteractionType, MessageFlags, SlashCommandBuilder, UserContextMenuCommandInteraction } from "discord.js";
 
-export async function userDescription(discordUserId: string, interaction: APIChatInputApplicationCommandInteraction | APIContextMenuInteraction)
+export async function userDescription(discordUserId: string, interaction: APIChatInputApplicationCommandInteraction | APIApplicationCommandInteraction )
 { 
 
 
@@ -10,6 +10,7 @@ export async function userDescription(discordUserId: string, interaction: APICha
 	let lichessId : string | undefined;
 	let inLadder = false;
 
+	if (interaction)
 	if (interaction.data.type==ApplicationCommandType.ChatInput)
 	{
 		//this is the slashcommand so we need to retrieve the information from the resolved data passed in with the interaction
@@ -23,11 +24,15 @@ export async function userDescription(discordUserId: string, interaction: APICha
 
 	if (interaction.data.type==ApplicationCommandType.User)
 	{
-		//user context meny
-		const i  = interaction as APIUserApplicationCommandInteraction;
-		mainName = i.user?.global_name;
-		secondName = i.user?.username;
+		//user context menu
+
+		const data = interaction.data as APIUserApplicationCommandInteractionData;
+		const i = interaction as APIApplicationCommandInteraction;
+
+		mainName = i.member?.user.global_name;
+		secondName = i.member?.user?.username;
 		nick = i.member?.nick;
+
 	}
 
 	const mainLower = mainName?.toLowerCase();

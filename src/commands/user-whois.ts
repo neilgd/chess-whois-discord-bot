@@ -7,7 +7,7 @@ import { userDescription } from "../user-description";
 //but also by users, and appear in their DMs
 
 export const data = new ContextMenuCommandBuilder()
-  .setName("Chess whois")
+  .setName("Chess who is")
   .setType(ApplicationCommandType.User)
   .setIntegrationTypes([ApplicationIntegrationType.UserInstall, ApplicationIntegrationType.GuildInstall])
   .setContexts([InteractionContextType.BotDM, InteractionContextType.Guild, InteractionContextType.PrivateChannel]);  
