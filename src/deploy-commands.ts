@@ -10,9 +10,30 @@ const rest = new REST({ version: "10" }).setToken(DISCORD_TOKEN!);
 
 //if TRUE, then only install on a single server (defined by DISCORD_SERVER_ID) for testing purposes
 const testing = false;
+const deleteFirst = false;
+
+//only if you want to delete them first
+if (deleteFirst)
+{
+deleteCommands().then(async() => await deployCommands());
+}
+else
+{
+deployCommands();
+
+}
 
 //this is async
-deployCommands();
+
+
+
+async function deleteCommands()
+{
+	await rest.put(
+  Routes.applicationCommands(DISCORD_APP_ID!),
+  { body: [] }
+);
+}
 
 async function deployCommands() {
   try {

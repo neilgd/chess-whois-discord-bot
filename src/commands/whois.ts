@@ -17,26 +17,6 @@ export const data = new SlashCommandBuilder()
       .setRequired(true)
 	
   )  
-function getUserId(interaction: APIApplicationCommandInteraction)
-{
-    if (interaction.data.type !== ApplicationCommandType.ChatInput) {
-    //this shouldn't happen
-    return;
-  }
-
-  const options  = interaction.data.options??[];
-  const option: APIApplicationCommandInteractionDataBasicOption = options.find(opt => opt.name === 'user-name') as APIApplicationCommandInteractionDataBasicOption;
-
-  if (!option){
-    return null;
-  }
-
-  const value = option.value as string;
-
-   return value;
-}
-
-
 
 export async function execute(interaction: APIApplicationCommandInteraction) {
 

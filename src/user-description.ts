@@ -1,4 +1,4 @@
-import { APIApplicationCommandInteraction, APIApplicationCommandInteractionDataBasicOption, APIApplicationCommandInteractionDataUserOption, APIChatInputApplicationCommandInteraction, APIContextMenuInteraction, APIUser, APIUserApplicationCommandInteraction, APIUserApplicationCommandInteractionData, ApplicationCommandOptionType, ApplicationCommandType, ApplicationIntegrationType, AttachmentBuilder, CommandInteraction, ContextMenuCommandBuilder, InteractionContextType, InteractionType, MessageFlags, SlashCommandBuilder, UserContextMenuCommandInteraction } from "discord.js";
+import { APIApplicationCommandInteraction, APIApplicationCommandInteractionDataBasicOption, APIApplicationCommandInteractionDataUserOption, APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIContextMenuInteraction, APIUser, APIUserApplicationCommandInteraction, APIUserApplicationCommandInteractionData, ApplicationCommandOptionType, ApplicationCommandType, ApplicationIntegrationType, AttachmentBuilder, CommandInteraction, ContextMenuCommandBuilder, InteractionContextType, InteractionType, MessageFlags, SlashCommandBuilder, UserContextMenuCommandInteraction } from "discord.js";
 
 export async function userDescription(discordUserId: string, interaction: APIChatInputApplicationCommandInteraction | APIApplicationCommandInteraction )
 { 
@@ -10,30 +10,29 @@ export async function userDescription(discordUserId: string, interaction: APICha
 	let lichessId : string | undefined;
 	let inLadder = false;
 
-	if (interaction)
-	if (interaction.data.type==ApplicationCommandType.ChatInput)
+	const data = interaction.data.type==ApplicationCommandType.ChatInput?
+	(interaction.data as APIChatInputApplicationCommandInteractionData):(interaction.data as APIUserApplicationCommandInteractionData);
+
+
+	const i = interaction as APIApplicationCommandInteraction;
+
+	const resolvedUser = data.resolved!.users![discordUserId];
+	secondName = resolvedUser.username;
+	mainName = resolvedUser.global_name;
+
+	if (!mainName)
 	{
-		//this is the slashcommand so we need to retrieve the information from the resolved data passed in with the interaction
-		const i = interaction as APIChatInputApplicationCommandInteraction;
-		const resolvedUser= i.data.resolved!.users![discordUserId]!;
-		const resolvedMember = i.data.resolved!.members![discordUserId]!;
-		mainName = resolvedUser.global_name;
+		mainName = secondName;
+	}
+
+	const members = data.resolved!.members;
+
+	if (members)
+	{
+		const resolvedMember = members[discordUserId]!;
 		nick = resolvedMember.nick;
-		secondName = resolvedUser.username;
 	}
-
-	if (interaction.data.type==ApplicationCommandType.User)
-	{
-		//user context menu
-
-		const data = interaction.data as APIUserApplicationCommandInteractionData;
-		const i = interaction as APIApplicationCommandInteraction;
-
-		mainName = i.member?.user.global_name;
-		secondName = i.member?.user?.username;
-		nick = i.member?.nick;
-
-	}
+	
 
 	const mainLower = mainName?.toLowerCase();
 	const secondLower = secondName?.toLowerCase();

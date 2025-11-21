@@ -23,8 +23,10 @@ export async function execute(interaction: APIApplicationCommandInteraction) {
 
 	  return {
 	  type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+
 	  data:  {
-		content: await userDescription(userId, interaction as APIContextMenuInteraction)
+		content: await userDescription(userId, interaction as APIContextMenuInteraction),
+		flags: MessageFlags.Ephemeral,
 	  } 
   
 
