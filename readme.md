@@ -22,6 +22,7 @@ And here is the install URL for both user and server installs:
 
 https://discord.com/oauth2/authorize?client_id=DISCORD_APP_ID&scope=bot%20applications.commands&permissions=0&integration_type=0&integration_type=1
 
+To use the /whois-link option, your lambda function will  need access to the chess-who-is-lookup table in DynamoDB, or set your own and set the DYNAMO_TABLE environment variable
 
 
 

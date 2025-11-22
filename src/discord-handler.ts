@@ -85,8 +85,6 @@ export const handler = async (
   // At this point, we trust the request
   const interaction = JSON.parse(rawBody) as APIInteraction;
   
-  console.log('Interaction', interaction);
-
 
   switch (interaction.type)
   {
@@ -95,10 +93,8 @@ export const handler = async (
 			type: InteractionResponseType.Pong,
 			});
 		case InteractionType.ApplicationCommand:
-			console.log("Command");
 			
 			const cmd = interaction as APIApplicationCommandInteraction;
-			console.log(cmd.data);
 			
 			switch (cmd.data.type)
 				{
@@ -110,8 +106,15 @@ export const handler = async (
 
 						switch (name) {
 							case 'whois':
-								const response = await commands.whois.execute(cmd);
-								return jsonResponse(response);
+								{
+									const response = await commands.whois.execute(cmd);
+									return jsonResponse(response);
+								}
+							case 'whois-link':
+								{
+									const response = await commands.whoisLink.execute(cmd);
+									return jsonResponse(response);
+								}
 						}
 					}
 	}

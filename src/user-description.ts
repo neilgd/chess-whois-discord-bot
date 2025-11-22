@@ -1,4 +1,5 @@
 import { APIApplicationCommandInteraction, APIApplicationCommandInteractionDataBasicOption, APIApplicationCommandInteractionDataUserOption, APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIContextMenuInteraction, APIUser, APIUserApplicationCommandInteraction, APIUserApplicationCommandInteractionData, ApplicationCommandOptionType, ApplicationCommandType, ApplicationIntegrationType, AttachmentBuilder, CommandInteraction, ContextMenuCommandBuilder, InteractionContextType, InteractionType, MessageFlags, SlashCommandBuilder, UserContextMenuCommandInteraction } from "discord.js";
+import { readDynamoLookUp } from "./dynamo";
 
 export async function userDescription(discordUserId: string, interaction: APIChatInputApplicationCommandInteraction | APIApplicationCommandInteraction )
 { 
@@ -8,6 +9,8 @@ export async function userDescription(discordUserId: string, interaction: APICha
 	let nick: string| null | undefined;
 	let secondName: string | undefined;
 	let lichessId : string | undefined;
+	let ccId : string | undefined;
+
 	let inLadder = false;
 
 	const data = interaction.data.type==ApplicationCommandType.ChatInput?
@@ -52,11 +55,22 @@ export async function userDescription(discordUserId: string, interaction: APICha
   	const discordName = `*${mainName}*${((extraNames.length==0)?"":` (aka ${extraNames})`)}`;
 	let description = '';
 
-	lichessId = await getLichessLadderInfo(discordUserId);
+	//look up from DynamoDB
 
-	if (lichessId)
+	const d = await readDynamoLookUp(discordUserId);
+
+	if (d)
+	{
+		lichessId = d.lichessId;
+		ccId = d.ccId;
+	}
+
+	const l2  = await getLichessLadderInfo(discordUserId);
+
+	if (l2)
 	{
 		inLadder = true;
+		lichessId = l2;
 	}
 
 	if (lichessId)
@@ -64,10 +78,16 @@ export async function userDescription(discordUserId: string, interaction: APICha
 		description+=`**Lichess**: [${lichessId}](<https://lichess.org/@/${lichessId}>)\r\n`;
 	}
 
+	if (ccId)
+	{
+		description+=`**Chess.com**: [${ccId}](<https://chess.com/member/${ccId}>)\r\n`
+	}
+
 	if (inLadder)
 	{
 		description+=`**Lichess Ladders**: [${lichessId}](<https://lichessladders.com/@/${lichessId}>)\r\n`;
 	}
+
 
 	if (description)
 	{
@@ -81,6 +101,7 @@ export async function userDescription(discordUserId: string, interaction: APICha
 	return description;
 
 }
+
 
 async function getLichessLadderInfo(discordUserId: string)
 {

@@ -20,7 +20,7 @@ export const data = new SlashCommandBuilder()
 
 export async function execute(interaction: APIApplicationCommandInteraction) {
 
-	console.log("In execute");
+
   if (interaction.data.type !== ApplicationCommandType.ChatInput) {
     //this shouldn't happen
     return;
