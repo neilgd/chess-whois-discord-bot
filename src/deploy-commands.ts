@@ -26,6 +26,12 @@ async function deleteCommands()
   Routes.applicationCommands(DISCORD_APP_ID!),
   { body: [] }
 );
+	await rest.put(
+  Routes.applicationGuildCommands(DISCORD_APP_ID!, DISCORD_SERVER_ID!),
+  { body: [] }
+);
+
+
 }
 
 async function deployCommands() {
