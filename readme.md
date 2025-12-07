@@ -2,7 +2,11 @@ This adds /whois and /who-link commands to Discord, and also a user context who 
 
 Pulls back information from Lichess, chess.com, Chess Dojo and Lichess Ladders.
 
-You'll need to
+The Discord bot can be installed per-user or on servers here:
+
+https://discord.com/oauth2/authorize?client_id=1382031526107025489&scope=bot%20applications.commands&permissions=0&integration_type=0&integration_type=1
+
+If you want to host it yourself, you'll need to:
 
 1) set up an AWS lambda function.  The function entry point is discord-handler.handler
 2) set up a Discord bot
