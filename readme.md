@@ -9,11 +9,11 @@ You'll need to
 3) Set up a function URL for the lambda function
 5) Set the following environment variables:
 
-DISCORD_TOKEN
-DISCORD_APP_ID
-DISCORD_PUBLIC_KEY
-DISCORD_SERVER_ID - Server for testing purposes
-DYNAMO_TABLE - A Dynamo DB table for storing /whois-lookup data
+* DISCORD_TOKEN
+* DISCORD_APP_ID
+* DISCORD_PUBLIC_KEY
+* DISCORD_SERVER_ID - Server for testing purposes
+* DYNAMO_TABLE - A Dynamo DB table for storing /whois-lookup data
 
 6) Set up a DynamoDB table with DiscordId (key), lichessId, ccId and updatedAt fields
 
