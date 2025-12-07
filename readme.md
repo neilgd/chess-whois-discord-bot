@@ -19,7 +19,7 @@ If you want to host it yourself, you'll need to:
 * DISCORD_SERVER_ID - Server for testing purposes
 * DYNAMO_TABLE - A Dynamo DB table for storing /whois-lookup data
 
-6) Set up a DynamoDB table with DiscordId (key), lichessId, ccId and updatedAt fields
+6) Set up a DynamoDB table with discordId (key), lichessId, ccId and updatedAt fields
 
 To deploy the command:
 
