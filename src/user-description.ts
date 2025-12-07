@@ -10,6 +10,8 @@ export async function userDescription(discordUserId: string, interaction: APICha
 	let secondName: string | undefined;
 	let lichessId : string | undefined;
 	let ccId : string | undefined;
+	let dojoId: string | undefined;
+	let dojoName: string | undefined;
 
 	let inLadder = false;
 
@@ -73,6 +75,28 @@ export async function userDescription(discordUserId: string, interaction: APICha
 		lichessId = l2;
 	}
 
+	const l3 = await getDojoInfo(discordUserId);
+
+	if (l3)
+	{
+		dojoId = l3.username;
+		dojoName = l3.displayName;
+
+		if (l3.ratings)
+		{
+			if (!lichessId)
+			{
+				lichessId=l3.ratings?.LICHESS?.username;
+			}
+			if (!ccId)
+			{
+				ccId = l3.ratings.CHESSCOM?.username;
+			}
+		}
+
+	}
+
+
 	if (lichessId)
 	{
 		description+=`**Lichess**: [${lichessId}](<https://lichess.org/@/${lichessId}>)\r\n`;
@@ -80,7 +104,12 @@ export async function userDescription(discordUserId: string, interaction: APICha
 
 	if (ccId)
 	{
-		description+=`**Chess.com**: [${ccId}](<https://chess.com/member/${ccId}>)\r\n`
+		description+=`**Chess.com**: [${ccId}](<https://chess.com/member/${ccId}>)\r\n`;
+	}
+
+	if (dojoId)
+	{
+		description+=`**ChessDojo**: [${dojoName}](https://www.chessdojo.club/profile/${dojoId}>)\r\n`;
 	}
 
 	if (inLadder)
@@ -102,6 +131,25 @@ export async function userDescription(discordUserId: string, interaction: APICha
 
 }
 
+async function getDojoInfo(discordUserId: string)
+{
+	const url = `https://g4shdaq6ug.execute-api.us-east-1.amazonaws.com/public/user/discord/${discordUserId}`;
+	const res = await fetch(url, {
+		method: "GET",
+		headers: {
+			"Accept": "application/json"
+		}
+		});
+
+		if (!res.ok) {
+			console.error("Error retrieving Dojo info");
+			console.error(await res.text());
+			return null;
+		}
+
+		return await res.json();
+
+}
 
 async function getLichessLadderInfo(discordUserId: string)
 {
@@ -116,8 +164,10 @@ async function getLichessLadderInfo(discordUserId: string)
 	});
 
 	if (!res.ok) {
+		console.error("Error retrieving ladder info");
 		console.error(await res.text());
-		 throw Error("Couldn't get data from Lichess ladders");
+		return null;
+
 	}
 
 	const data : any [] = await res.json();

@@ -28,7 +28,7 @@ export async function readDynamoLookUp(discordId: string) {
 
 // WRITE (PutItem)
 export async function writeDynamoLookup(discordId: string, lichessId: string, ccId: string) {
-	console.log("DISCORD-ID", discordId);
+	
   await docClient.send(new PutCommand({
     TableName: TABLE,
     Item: {

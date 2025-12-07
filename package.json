@@ -1,5 +1,5 @@
 {
-  "name": "chess-gubbins-discord-bot",
+  "name": "chess-whois-discord-bot",
   "version": "1.0.0",
   "main": "dist/handler.js",
   "scripts": {
