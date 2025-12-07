@@ -1,5 +1,8 @@
 //console.log('Handler loaded');
 
+//console.time();
+//console.log("Importing");
+
 import {
   APIGatewayProxyEventV2,
   APIGatewayProxyResultV2,
@@ -63,8 +66,10 @@ export const handler = async (
     };
   }
 
-  //console.log("Verifying request");
+ // console.timeLog();
+ // console.log("Verifying request");
 
+  
   // Verify request
   let valid = false;
   try {
@@ -85,7 +90,9 @@ export const handler = async (
   // At this point, we trust the request
   const interaction = JSON.parse(rawBody) as APIInteraction;
   
-
+//  console.timeLog();
+ // console.log("Running request");
+  
   switch (interaction.type)
   {
 		case InteractionType.Ping:

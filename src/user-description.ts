@@ -1,9 +1,11 @@
-import { APIApplicationCommandInteraction, APIApplicationCommandInteractionDataBasicOption, APIApplicationCommandInteractionDataUserOption, APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIContextMenuInteraction, APIUser, APIUserApplicationCommandInteraction, APIUserApplicationCommandInteractionData, ApplicationCommandOptionType, ApplicationCommandType, ApplicationIntegrationType, AttachmentBuilder, CommandInteraction, ContextMenuCommandBuilder, InteractionContextType, InteractionType, MessageFlags, SlashCommandBuilder, UserContextMenuCommandInteraction } from "discord.js";
+import { APIApplicationCommandInteraction, APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIUserApplicationCommandInteractionData, ApplicationCommandType } from "discord.js";
 import { readDynamoLookUp } from "./dynamo";
 
 export async function userDescription(discordUserId: string, interaction: APIChatInputApplicationCommandInteraction | APIApplicationCommandInteraction )
 { 
 
+	//console.timeLog();
+	//console.log("Getting user description");
 
 	let mainName: string | null | undefined;
 	let nick: string| null | undefined;
@@ -60,6 +62,8 @@ export async function userDescription(discordUserId: string, interaction: APICha
 	//look up from DynamoDB
 
 	const d = await readDynamoLookUp(discordUserId);
+	//console.timeLog();
+	//console.log("Got from Dynamo DB");
 
 	if (d)
 	{
@@ -68,6 +72,8 @@ export async function userDescription(discordUserId: string, interaction: APICha
 	}
 
 	const l2  = await getLichessLadderInfo(discordUserId);
+	//console.timeLog();
+	//console.log("Got from ladder");
 
 	if (l2)
 	{
@@ -76,6 +82,9 @@ export async function userDescription(discordUserId: string, interaction: APICha
 	}
 
 	const l3 = await getDojoInfo(discordUserId);
+
+	//console.timeLog();
+	//console.log("Got from Dojo");
 
 	if (l3)
 	{
@@ -128,6 +137,8 @@ export async function userDescription(discordUserId: string, interaction: APICha
 		description=`No details found for ${discordName}`;
 	}
 
+//	console.timeLog();
+//	console.log("Got description");
 	return description;
 
 }
@@ -155,7 +166,7 @@ async function getDojoInfo(discordUserId: string)
 async function getLichessLadderInfo(discordUserId: string)
 {
 	
-	const url = `https://api.lichessladders.com/users/search?discordId=${discordUserId}`;
+	const url = `https://api.lichessladders.com/users/discord/${discordUserId}`;
 
 	const res = await fetch(url, {
 	method: "GET",
@@ -165,19 +176,17 @@ async function getLichessLadderInfo(discordUserId: string)
 	});
 
 	if (!res.ok) {
+		if (res.status==404)
+		{
+			return null;
+		}
 		console.error("Error retrieving ladder info");
 		console.error(await res.text());
 		return null;
-
 	}
 
-	const data : any [] = await res.json();
+	const data : any = await res.json();
 
-	if (data.length!=0)
-	{
-		return data[0].lichessId;
-	}
-
-	return null;
+	return data.lichessId;
 }
 
