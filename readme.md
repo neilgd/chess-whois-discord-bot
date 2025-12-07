@@ -1,3 +1,7 @@
+This adds /whois and /who-link commands to Discord, and also a user context who is command.
+
+Pulls back information from Lichess, chess.com, Chess Dojo and Lichess Ladders.
+
 You'll need to
 
 1) set up an AWS lambda function.  The function entry point is discord-handler.handler

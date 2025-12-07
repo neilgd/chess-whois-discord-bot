@@ -79,6 +79,7 @@ export async function userDescription(discordUserId: string, interaction: APICha
 
 	if (l3)
 	{
+
 		dojoId = l3.username;
 		dojoName = l3.displayName;
 
@@ -109,7 +110,7 @@ export async function userDescription(discordUserId: string, interaction: APICha
 
 	if (dojoId)
 	{
-		description+=`**ChessDojo**: [${dojoName}](https://www.chessdojo.club/profile/${dojoId}>)\r\n`;
+		description+=`**ChessDojo**: [${dojoName}](<https://www.chessdojo.club/profile/${dojoId}>)\r\n`;
 	}
 
 	if (inLadder)
