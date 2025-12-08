@@ -81,12 +81,12 @@ export async function userDescriptionFromDiscordUserId(discordUserId: string)
 
 	if (lichessId)
 	{
-		description+=`**Lichess**: [${lichessId}](<https://lichess.org/@/${lichessId}>)${lichessRatingsString?` (${lichessRatingsString})`:``}\r\n`;
+		description+=`**Lichess**: [${lichessId}](<https://lichess.org/@/${lichessId}>)${lichessRatingsString?`\r\n    ${lichessRatingsString}`:``}\r\n`;
 	}
 
 	if (ccId)
 	{
-		description+=`**Chess.com**: [${ccId}](<https://chess.com/member/${ccId}>)${ccRatingsString?` (${ccRatingsString})`:``}\r\n`;
+		description+=`**Chess.com**: [${ccId}](<https://chess.com/member/${ccId}>)${ccRatingsString?`\r\n    ${ccRatingsString}`:``}\r\n`;
 	}
 
 	if (dojoId)

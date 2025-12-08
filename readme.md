@@ -8,7 +8,7 @@ https://discord.com/oauth2/authorize?client_id=1382031526107025489&scope=bot%20a
 
 If you want to host it yourself, you'll need to:
 
-1) set up an AWS lambda function.  The function entry point is discord-handler.handler
+1) set up an AWS lambda function.  The function entry point is discord-handler.handler. Make sure it has 512Mb memory to avoid slow cold starts.
 2) set up a Discord bot
 3) Set up a function URL for the lambda function
 5) Set the following environment variables:
