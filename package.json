@@ -6,6 +6,8 @@
     "build": "esbuild src/discord-handler.ts --bundle --platform=node --target=node22 --format=cjs --outfile=dist/discord-handler.js --minify --tree-shaking=true --external:aws-sdk",
     "typecheck": "tsc",
     "build-deployment": "esbuild src/deploy-commands.ts --bundle --platform=node --target=node22 --format=cjs --outfile=dist/deploy-commands.js --minify --tree-shaking=true --external:aws-sdk",
+    "build-test": "esbuild src/test.ts --platform=node --target=node22 --format=cjs --outfile=dist/test.js --bundle --tree-shaking=true",
+    "test":"node dist/test.js",
     "clean": "rm -rf dist",
     "prepare": "npm run build"
   },
