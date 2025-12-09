@@ -4,11 +4,7 @@ Pulls back information from Lichess, chess.com, Chess Dojo and Lichess Ladders.
 
 The Discord bot can be installed per-user or on servers here:
 
-Per server:
-https://discord.com/oauth2/authorize?client_id=1440786715366133900&permissions=2048&integration_type=0&scope=bot
-
-Per user:
-https://discord.com/oauth2/authorize?client_id=1440786715366133900&permissions=2048&integration_type=1
+https://discord.com/oauth2/authorize?client_id=1440786715366133900
 
 If you want to host it yourself, you'll need to:
 
