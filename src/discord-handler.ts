@@ -129,7 +129,7 @@ export const handler = async (
           }
 
           //console.log("Deferring response");
-          return jsonResponse({type:InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE})
+          return jsonResponse({type:InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE, data:{flags:64}}); //ephemeral message
 	}
 
 	return { statusCode:400,body:"unknown command"};
