@@ -6,12 +6,9 @@ import { commands } from "./commands";
 
 export const handler = async (event: any)=> {
 
-	const rawBody = event.rawBody as string;
-	console.log(rawBody);
+	//console.log(event);
 
-  	const interaction = JSON.parse(rawBody) as APIInteraction;
-
-	console.log(interaction);
+  	const interaction = event as APIInteraction;
 
 	try
 	{
@@ -34,14 +31,16 @@ export const handler = async (event: any)=> {
 								case 'whois':
 									{
 										const response = await commands.whois.execute(cmd);
+										//console.log("Sending response to discord:",response);
 										await sendResponseToDiscord(response);										
 									}
+									break;
 								case 'whois-link':
 									{
 										const response = await commands.whoisLink.execute(cmd);
-										await sendResponseToDiscord(response);
-										
+										await sendResponseToDiscord(response);										
 									}
+									break;
 							}
 						}
 		}
@@ -72,8 +71,10 @@ export const handler = async (event: any)=> {
 	{
 		  const url = `https://discord.com/api/v10/webhooks/${process.env.DISCORD_APP_ID!}/${interaction.token}`;
 
+		  //console.log(url);
+
 			const r = await fetch(url, {
-			method: 'PATCH',
+			method: 'POST',
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
 			content:content,

@@ -68,7 +68,7 @@ export const handler = async (
   }
 
  // console.timeLog();
- // console.log("Verifying request");
+  console.log("Verifying request");
 
   
   // Verify request
@@ -92,8 +92,10 @@ export const handler = async (
   const interaction = JSON.parse(rawBody) as APIInteraction;
   
 //  console.timeLog();
- // console.log("Running request");
-  
+  //console.log("Running request");
+
+  //console.log(interaction.type);
+
   switch (interaction.type)
   {
 		case InteractionType.Ping:
@@ -111,21 +113,20 @@ export const handler = async (
 						return jsonResponse(response);
           default:
             {
+              //console.log("Command received");
             //fire a lambda function and defer the response
             
             const command = new InvokeCommand({
               FunctionName: "chess-whois-discord-bot-reply",
-              Payload: Buffer.from(JSON.stringify({rawBody: rawBody})),
-              //InvocationType: "Event" // don't wait for response
-              InvocationType: "RequestResponse" // wait for response
+              Payload: Buffer.from(rawBody),
+              InvocationType: "Event" // don't wait for response
+              //InvocationType: "RequestResponse" // wait for response
             });
 
             const lambda = new LambdaClient({});
 
             const response = await lambda.send(command);
             //console.log("Lambda invoked:", response);
-            const x = JSON.parse(Buffer.from(response.Payload!).toString());
-            console.log("Lambda invoked:", response,x);
             
             if (response.FunctionError=="Unhandled")
             {
@@ -134,6 +135,7 @@ export const handler = async (
               console.error(error.stackTrace);
             }
 
+            //console.log("Deferring response");
             return jsonResponse({type:InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE})
 					}
         }
