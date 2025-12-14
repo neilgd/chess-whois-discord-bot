@@ -20,8 +20,9 @@ import {
 } from 'discord-api-types/v10';
 
 import {commands} from './commands/index';
-import { CommandInteraction, Interaction, InteractionResponseType } from 'discord.js';
+import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 
+import { InteractionResponseType } from "discord-interactions";
 
 const PUBLIC_KEY = process.env.DISCORD_PUBLIC_KEY!;
 
@@ -97,7 +98,7 @@ export const handler = async (
   {
 		case InteractionType.Ping:
 			return jsonResponse({
-			type: InteractionResponseType.Pong,
+			type: InteractionResponseType.PONG,
 			});
 		case InteractionType.ApplicationCommand:
 			
@@ -108,22 +109,34 @@ export const handler = async (
 					case ApplicationCommandType.User:
 						const response = await commands.userWhois.execute(cmd);
 						return jsonResponse(response);
-					case ApplicationCommandType.ChatInput:
-						const name = cmd.data.name; 
+          default:
+            {
+            //fire a lambda function and defer the response
+            
+            const command = new InvokeCommand({
+              FunctionName: "chess-whois-discord-bot-reply",
+              Payload: Buffer.from(JSON.stringify({rawBody: rawBody})),
+              //InvocationType: "Event" // don't wait for response
+              InvocationType: "RequestResponse" // wait for response
+            });
 
-						switch (name) {
-							case 'whois':
-								{
-									const response = await commands.whois.execute(cmd);
-									return jsonResponse(response);
-								}
-							case 'whois-link':
-								{
-									const response = await commands.whoisLink.execute(cmd);
-									return jsonResponse(response);
-								}
-						}
+            const lambda = new LambdaClient({});
+
+            const response = await lambda.send(command);
+            //console.log("Lambda invoked:", response);
+            const x = JSON.parse(Buffer.from(response.Payload!).toString());
+            console.log("Lambda invoked:", response,x);
+            
+            if (response.FunctionError=="Unhandled")
+            {
+              const error = JSON.parse(Buffer.from(response.Payload!).toString());
+              console.error(error.errorType, error.errorMessage);
+              console.error(error.stackTrace);
+            }
+
+            return jsonResponse({type:InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE})
 					}
+        }
 	}
 
 	return { statusCode:400,body:"unknown command"};

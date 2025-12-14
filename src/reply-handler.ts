@@ -6,11 +6,12 @@ import { commands } from "./commands";
 
 export const handler = async (event: any)=> {
 
-	const discordId = event.discordId as string;
 	const rawBody = event.rawBody as string;
+	console.log(rawBody);
 
   	const interaction = JSON.parse(rawBody) as APIInteraction;
 
+	console.log(interaction);
 
 	try
 	{

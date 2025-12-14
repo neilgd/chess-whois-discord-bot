@@ -7,6 +7,7 @@
     "typecheck": "tsc",
     "build-deployment": "esbuild src/deploy-commands.ts --bundle --platform=node --target=node22 --format=cjs --outfile=dist/deploy-commands.js --minify --tree-shaking=true --external:aws-sdk",
     "build-test": "esbuild src/test.ts --platform=node --target=node22 --format=cjs --outfile=dist/test.js --bundle --tree-shaking=true",
+    "build-reply": "esbuild src/reply-handler.ts --bundle --platform=node --target=node22 --sourcemap --format=cjs --outfile=dist/reply-handler.js --minify --tree-shaking=true --external:aws-sdk", 
     "test":"node dist/test.js",
     "clean": "rm -rf dist",
     "prepare": "npm run build"
