@@ -21,14 +21,6 @@ export async function execute(interaction: APIApplicationCommandInteraction) {
 
   const userId  = interaction.data.target_id;
 
-	  return {
-	  type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+	  return await userDescription(userId, interaction as APIContextMenuInteraction);
 
-	  data:  {
-		content: await userDescription(userId, interaction as APIContextMenuInteraction),
-		flags: MessageFlags.Ephemeral,
-	  } 
-  
-
-}
 }

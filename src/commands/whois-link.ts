@@ -34,18 +34,10 @@ export async function execute(interaction: APIApplicationCommandInteraction) {
 	const ccOption: APIApplicationCommandInteractionDataUserOption = options.find(opt => opt.name === 'cc-id') as APIApplicationCommandInteractionDataUserOption;
 
   if (!lichessOption && !ccOption){
- return {
-      type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-      data:  {
-        content:`❌ Please give either your lichess or chess.com username`,
-        flags: MessageFlags.Ephemeral
-      } 
-    };
+ 		return `❌ Please give either your lichess or chess.com username`;
   }
 
-
   const myId = interaction.member?.user.id!;
-
 
   if (lichessOption && lichessOption.value)
 	{
@@ -57,12 +49,6 @@ export async function execute(interaction: APIApplicationCommandInteraction) {
 		await updateCcId(myId, ccOption.value);
 	}
 
-   return {
-      type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-      data:  {
-        content:`Your data has been stored`,
-        flags: MessageFlags.Ephemeral
-      } 
-    };
+   return "Your data has been stored";
 
 }

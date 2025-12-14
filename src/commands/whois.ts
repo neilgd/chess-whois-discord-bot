@@ -33,21 +33,12 @@ export async function execute(interaction: APIApplicationCommandInteraction) {
     return;
   }
 
-  if (!option.value) {  
-     return {
-      type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-      data:  {
-        content:`❌ This is not a valid user Id.`,
-        flags: MessageFlags.Ephemeral
-      } 
-    };
-  }   
 
-	return {
-	type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-	data:  {
-	content:await userDescription(option.value, interaction as APIChatInputApplicationCommandInteraction),
-	flags: MessageFlags.Ephemeral
-	} 
-}
+  if (!option.value) 
+	{  
+	return "❌ This is not a valid user Id.";
+	}
+
+	return await userDescription(option.value, interaction as APIChatInputApplicationCommandInteraction);
+
 }
