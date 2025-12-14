@@ -106,39 +106,30 @@ export const handler = async (
 			
 			const cmd = interaction as APIApplicationCommandInteraction;
 			
-			switch (cmd.data.type)
-				{
-					case ApplicationCommandType.User:
-						const response = await commands.userWhois.execute(cmd);
-						return jsonResponse(response);
-          default:
-            {
-              //console.log("Command received");
-            //fire a lambda function and defer the response
-            
-            const command = new InvokeCommand({
-              FunctionName: "chess-whois-discord-bot-reply",
-              Payload: Buffer.from(rawBody),
-              InvocationType: "Event" // don't wait for response
-              //InvocationType: "RequestResponse" // wait for response
-            });
+            //console.log("Command received");
+          //fire a lambda function and defer the response
+          
+          const command = new InvokeCommand({
+            FunctionName: "chess-whois-discord-bot-reply",
+            Payload: Buffer.from(rawBody),
+            InvocationType: "Event" // don't wait for response
+            //InvocationType: "RequestResponse" // wait for response
+          });
 
-            const lambda = new LambdaClient({});
+          const lambda = new LambdaClient({});
 
-            const response = await lambda.send(command);
-            //console.log("Lambda invoked:", response);
-            
-            if (response.FunctionError=="Unhandled")
-            {
-              const error = JSON.parse(Buffer.from(response.Payload!).toString());
-              console.error(error.errorType, error.errorMessage);
-              console.error(error.stackTrace);
-            }
+          const response = await lambda.send(command);
+          //console.log("Lambda invoked:", response);
+          
+          if (response.FunctionError=="Unhandled")
+          {
+            const error = JSON.parse(Buffer.from(response.Payload!).toString());
+            console.error(error.errorType, error.errorMessage);
+            console.error(error.stackTrace);
+          }
 
-            //console.log("Deferring response");
-            return jsonResponse({type:InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE})
-					}
-        }
+          //console.log("Deferring response");
+          return jsonResponse({type:InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE})
 	}
 
 	return { statusCode:400,body:"unknown command"};
